@@ -2,9 +2,8 @@ import cookieParser from "cookie-parser";
 import express, {Application, Request, Response} from "express";
 import cors from "cors";
 import config from "./config";
-import { prisma } from "./lib/prisma";
-import httpStatus from "http-status";
 import { userRouter } from "./modules/user/user.route";
+import { authRouter } from "./modules/auth/auth.route";
 
 const app : Application = express();
 app.use(express.json());
@@ -21,7 +20,7 @@ app.get("/", async (req : Request, res : Response) => {
     res.send("hello, world")
 })
 
-app.use("/api/users", userRouter);
+app.use("/api/auth", authRouter);
  
 app.use("/api/users", userRouter);
 
