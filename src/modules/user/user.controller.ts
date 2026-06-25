@@ -13,6 +13,19 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
         data: { users }
     })})
 
+    const getMyProfile = catchAsync(async (req: Request, res: Response) => {
+        const profile = await userService.getMyProfileFromDB(req.user.id);
+
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.OK,
+            message: "user profile retrieved successfully",
+            data: { profile }
+        })
+
+    })
+
 export const userController = {
-    getAllUsers
+    getAllUsers,
+    getMyProfile
 }

@@ -7,6 +7,16 @@ const createToken = (payload: JwtPayload, secret: string, expiresIn: SignOptions
     return token
 }
 
+const verifyToken = (token: string, secret: string) => {
+    try {
+        const verifyToken = jwt.verify(token, secret);
+        return verifyToken;
+    } catch (error) {
+        throw new Error ("Invalid Token");
+    }
+}
+
 export const jwtUtils = {
-    createToken
+    createToken,
+    verifyToken
 }
