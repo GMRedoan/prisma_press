@@ -8,7 +8,8 @@ const router = Router();
 
 router.get("/", userController.getAllUsers);
 
-router.get("/me", auth(Role.USER, Role.ADMIN), userController.getMyProfile);
+router.get("/me", auth(Role.USER, Role.ADMIN), 
+userController.getMyProfile);
 
 router.put("/my-profile", auth(Role.USER, Role.ADMIN), userController.updateMyProfile);
 
