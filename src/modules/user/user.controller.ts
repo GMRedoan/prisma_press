@@ -13,7 +13,7 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
         data: { users }
     })})
 
-    const getMyProfile = catchAsync(async (req: Request, res: Response) => {
+const getMyProfile = catchAsync(async (req: Request, res: Response) => {
         const profile = await userService.getMyProfileFromDB(req.user.id);
 
         sendResponse(res, {
@@ -25,7 +25,18 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
 
     })
 
+const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
+    const profile = await userService.updateMyProfileInDB(req.user.id, req.body);
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "user profile updated successfully",
+        data: { profile }
+    })
+})
+
 export const userController = {
     getAllUsers,
-    getMyProfile
+    getMyProfile,
+    updateMyProfile
 }

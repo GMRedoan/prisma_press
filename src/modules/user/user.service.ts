@@ -25,7 +25,18 @@ const getMyProfileFromDB = async (userId: string) => {
     return user;
 }
 
+const updateMyProfileInDB = async (userId: string, payload: any) => {
+    const user = await prisma.user.update({
+        where: {
+            id: userId
+        },
+        data: payload
+    });
+    return user;
+}
+
 export const userService = {
     getAllUserFromDB,
-    getMyProfileFromDB
+    getMyProfileFromDB,
+    updateMyProfileInDB
 }

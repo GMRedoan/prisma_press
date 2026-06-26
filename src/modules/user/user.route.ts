@@ -1,51 +1,15 @@
-import { NextFunction, Request, Response, Router } from "express";
+import { Router } from "express";
 import { userController } from "./user.controller";
-import { jwtUtils } from "../../utils/jwt";
-import config from "../../config";
 import { Role } from "../../../generated/prisma/enums";
-import httpStatus from "http-status";
+import { auth } from "../../middleware/auth";
 
 const router = Router();
 
-declare global {
-    namespace Express {
-        interface Request {
-            user: {
-                id: string;
-                name: string;
-                email: string;
-                role: string;
-            }
-        }
-    }
-}
 
 router.get("/", userController.getAllUsers);
 
-router.get("/me", (req: Request, res: Response, next: NextFunction) => {
-    const { accessToken } = req.cookies;
+router.get("/me", auth(Role.USER, Role.ADMIN), userController.getMyProfile);
 
-    const verifyToken = jwtUtils.verifyToken(accessToken, config.jwt_access_secret);
-
-    if (typeof verifyToken === "string") {
-        throw new Error(verifyToken);
-    }
-
-    const {id,name, email, role} = verifyToken;
-    const requiredRole = [Role.ADMIN, Role.USER, Role.AUTHOR];
-
-    if (!requiredRole.includes(role)) {
-        return res.status(403).json({
-            success: false,
-            statusCode: httpStatus.FORBIDDEN,
-            message: "You are not allowed to access this route",
-        })
-    }
-    req.user = {
-        id, name, email, role
-    }
- next();
-},
-    userController.getMyProfile);
+router.put("/my-profile", auth(Role.USER, Role.ADMIN), userController.updateMyProfile);
 
 export const userRouter = router;
