@@ -10,5 +10,8 @@ model User {
 
     profile Profile?
 
+    post    Post[]
+    comment Comment[]
+
     @@map("users")
 }
