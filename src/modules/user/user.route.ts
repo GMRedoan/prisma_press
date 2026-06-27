@@ -6,7 +6,7 @@ import { auth } from "../../middleware/auth";
 const router = Router();
 
 
-router.get("/", userController.getAllUsers);
+router.get("/", auth(Role.ADMIN), userController.getAllUsers);
 
 router.get("/me", auth(Role.USER, Role.ADMIN), 
 userController.getMyProfile);
