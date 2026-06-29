@@ -1,5 +1,5 @@
 import { prisma } from "../../lib/prisma"
-import { ICreatePost } from "./post.interface"
+import { ICreatePost, IUpdatePostPayload } from "./post.interface"
 
 const CreatePostInDB = async (payload: ICreatePost, userId: string) => {
     const result = await prisma.post.create({
@@ -81,12 +81,42 @@ const getPostsByIdFromDB = async (postId: string) => {
     return updatePostView;
 }
 
-const updatePostsIdInDB = () => {
+const updatePostsIdInDB = async (postId: string, payload: IUpdatePostPayload, authorId: string, isAdmin: boolean) => {
+    const post = await prisma.post.findUniqueOrThrow({
+        where: {
+            id: postId
+        }
+    })
 
+    if (post.authorId !== authorId && !isAdmin) {
+        throw new Error("You are not allowed to update this post");
+    }
+
+    const result = await prisma.post.update({
+        where: {
+            id: postId
+        },
+        data: payload
+     })
+    return result
 }
 
-const deletePostsIdInDB = () => {
+const deletePostsIdInDB = async (postId: string, authorId: string, isAdmin: boolean) => {
+    const post = await prisma.post.findUniqueOrThrow({
+        where: {
+            id: postId
+        }
+    })
 
+    if (post.authorId !== authorId && !isAdmin) {
+        throw new Error("You are not allowed to delete this post");
+    }
+
+    await prisma.post.delete({
+        where: {
+            id: postId
+        }
+     })
 }
 
 export const postService = {

@@ -11,12 +11,12 @@ router.get("/", postController.getAllPosts)
 
 router.get("/stats", auth(Role.ADMIN), postController.getAllStats)
 
-router.get("/my-posts", auth(Role.USER, Role.ADMIN), postController.getMyPosts)
+router.get("/my-posts", auth(Role.USER, Role.AUTHOR, Role.ADMIN), postController.getMyPosts)
 
 router.get("/:postId", postController.getPostsById)
 
-router.patch("/:postId", auth(Role.USER, Role.ADMIN), postController.updatePostsId)
+router.patch("/:postId", auth(Role.USER, Role.AUTHOR, Role.ADMIN), postController.updatePostsId)
 
-router.delete("/:postId", auth(Role.USER, Role.ADMIN), postController.deletePostsId);
+router.delete("/:postId", auth(Role.USER, Role.AUTHOR, Role.ADMIN), postController.deletePostsId);
 
-export const postRouter = router
+export const postRouter = router;
