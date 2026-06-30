@@ -7,14 +7,14 @@ const router = Router();
 
 router.get("/author/:authorId", commentController.getCommentsByAuthorId);
 
-router.get("/commentId", commentController.getCommentsByCommentId);
+router.get("/:commentId", commentController.getCommentsByCommentId);
 
 router.post("/", auth(Role.USER, Role.ADMIN), commentController.createComment);
-
+ 
 router.patch("/:commentId", auth(Role.USER, Role.ADMIN), commentController.updateComment)
 
 router.delete("/:commentId", auth(Role.USER, Role.ADMIN), commentController.deleteComment);
 
-router.patch("/:commentId/moderate", auth(Role.ADMIN), commentController.moderateComment);
+router.patch("/:commentId/moderate", auth(Role.ADMIN, Role.USER), commentController.moderateComment);
 
 export const commentsRouter = router

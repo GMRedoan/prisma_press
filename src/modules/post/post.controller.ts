@@ -30,7 +30,13 @@ const getAllPosts =  catchAsync(async (req: Request, res: Response) => {
 
 
 const getAllStats = catchAsync(async (req: Request, res: Response) => {
-
+    const result = await postService.getAllStatsFromDB();
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "stats retrieved successfully",
+        data: result 
+    })
 })
 
 const getMyPosts = catchAsync(async (req: Request, res: Response) => {
@@ -50,6 +56,7 @@ const getMyPosts = catchAsync(async (req: Request, res: Response) => {
 
 const getPostsById = catchAsync(async (req: Request, res: Response) => {
     const postId = req.params.postId;
+
     if (!postId){
         throw new Error("post id is required")
     }
