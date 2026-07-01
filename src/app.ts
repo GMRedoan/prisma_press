@@ -8,6 +8,7 @@ import { postRouter } from "./modules/post/post.route";
 import { commentsRouter } from "./modules/comment/comment.route";
 import { notFound } from "./middleware/notFound";
 import { globalError } from "./middleware/globalError";
+import { subscriptionRouter } from "./modules/subscription/subscription.route";
 
 const app : Application = express();
 app.use(express.json());
@@ -25,12 +26,10 @@ app.get("/", async (req : Request, res : Response) => {
 })
 
 app.use("/api/auth", authRouter);
- 
 app.use("/api/users", userRouter);
-
 app.use("/api/posts", postRouter);
-
 app.use("/api/comments", commentsRouter);
+app.use("/api/subscription", subscriptionRouter);
 
 
 app.use(notFound);
