@@ -1,4 +1,5 @@
 import { CommentStatus, PostStatus } from "../../../generated/prisma/enums";
+import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma"
 import { ICreatePost, IPostQuery, IUpdatePostPayload } from "./post.interface"
 
@@ -18,6 +19,47 @@ const getAllPostFromDB = async (query: IPostQuery) => {
     const skip = (page - 1) * limit;
     const sortBy = query.sortBy ? query.sortBy : "createdAt";
     const sortOrder = query.sortOrder ? query.sortOrder : "desc";
+
+    const addCondition : PostWhereInput[] = [];
+    if(query.searchTerm){
+        addCondition.push({
+            OR: [
+                {
+                    title: {
+                        contains: query.searchTerm,
+                        mode: "insensitive"
+                    }
+                },
+                {
+                    content: {
+                        contains: query.searchTerm,
+                        mode: "insensitive"
+                    }
+                }
+            ]
+        })
+    }
+    
+    if(query.title){
+        addCondition.push({
+            title: query.title
+        })
+    }
+    if(query.content){
+        addCondition.push({
+            content: query.content
+        })
+    }
+    if(query.authorId){
+        addCondition.push({
+            authorId: query.authorId
+        })
+    }
+    if(query.isFeatured){
+        addCondition.push({
+            isFeatured: Boolean(query.isFeatured)
+        })
+    }
     const post = await prisma.post.findMany(
         {
             // filtering
@@ -53,34 +95,39 @@ const getAllPostFromDB = async (query: IPostQuery) => {
             // },
 
 
-            where: {
-                AND: [
+            // where: {
+            //     AND: [
 
-                    query.searchTerm ? {
-                        OR: [
-                            {
-                                title: {
-                                    contains: query.searchTerm,
-                                    mode: "insensitive"
-                                }
-                            },
-                            {
-                                content: {
-                                    contains: query.searchTerm,
-                                    mode: "insensitive"
-                                }
-                            }
-                        ]
-                    } : {},
+            //         query.searchTerm ? {
+            //             OR: [
+            //                 {
+            //                     title: {
+            //                         contains: query.searchTerm,
+            //                         mode: "insensitive"
+            //                     }
+            //                 },
+            //                 {
+            //                     content: {
+            //                         contains: query.searchTerm,
+            //                         mode: "insensitive"
+            //                     }
+            //                 }
+            //             ]
+            //         } : {},
 
 
-                    // title filtering
-                    query.title ? { title: query.title } : {},
-                    // content filtering
-                    query.content ? { content: query.content } : {},
-                    // status filtering
-                ]
+            //         // title filtering
+            //         query.title ? { title: query.title } : {},
+            //         // content filtering
+            //         query.content ? { content: query.content } : {},
+            //         // status filtering
+            //     ]
+            // },
+
+            where:{
+                AND: addCondition
             },
+
             // pagination
             take: limit,
             skip: skip,
